@@ -52,7 +52,7 @@ export const rateUser = asyncHandler(async (req, res) => {
   ratings.forEach((r) => {
     total += r.rating;
   });
-  const avgRating = total / ratings.length;
+  const avgRating = Math.round((total / ratings.length) * 10) / 10;
 
   await User.findByIdAndUpdate(
     { _id: user._id },
