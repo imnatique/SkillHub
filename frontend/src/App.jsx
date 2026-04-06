@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Footer from "./Components/Footer/Footer";
 import Discover from "./Pages/Discover/Discover";
@@ -17,6 +18,20 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
+  // Keep Render backend alive - ping every 14 minutes
+  useEffect(() => {
+    const keepAlive = () => {
+      fetch(`${import.meta.env.VITE_SERVER_URL}/health`, { 
+        method: "GET",
+        credentials: "include" 
+      }).catch(() => {}); // silently ignore errors
+    };
+
+    keepAlive(); // ping immediately on load
+    const interval = setInterval(keepAlive, 14 * 60 * 1000); // every 14 min
+    return () => clearInterval(interval);
+  }, []);
+  
   return (
     <>
       <Header />
