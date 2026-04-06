@@ -13,6 +13,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 dotenv.config();
 
+const CLIENT_URL = process.env.CLIENT_URL;
+
 passport.use(
   new GoogleStrategy(
     {
@@ -31,7 +33,7 @@ export const googleAuthHandler = passport.authenticate("google", {
 });
 
 export const googleAuthCallback = passport.authenticate("google", {
-  failureRedirect: "https://skillhubconnect.vercel.app/login",
+  failureRedirect: `${CLIENT_URL}/login`,
   session: false,
 });
 
@@ -44,10 +46,10 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
     res.cookie("accessToken", jwtToken, {
       httpOnly: true,
       expires: expiryDate,
-      sameSite: "None",
-      secure: true,
+      sameSite: "Lax",
+      secure: process.env.NODE_ENV === "production",
     });
-    return res.redirect(`https://skillhubconnect.vercel.app/discover`);
+    return res.redirect(`${CLIENT_URL}/discover`);
   }
 
   let unregisteredUser = await UnRegisteredUser.findOne({
@@ -65,10 +67,10 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
   res.cookie("accessTokenRegistration", jwtToken, {
     httpOnly: true,
     expires: expiryDate,
-    sameSite: "None",
-    secure: true,
+    sameSite: "Lax",
+    secure: process.env.NODE_ENV === "production",
   });
-  return res.redirect("https://skillhubconnect.vercel.app/register");
+  return res.redirect(`${CLIENT_URL}/register`);
 });
 
 export const handleLogout = (req, res) => {
