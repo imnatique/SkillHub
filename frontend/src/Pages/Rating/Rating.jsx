@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // ← add useParams
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useUser } from "../../util/UserContext";
@@ -11,6 +11,7 @@ const Rating = () => {
   const { user, setUser } = useUser();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { username } = useParams(); // ← get the target user from URL
 
   const handleStarClick = (starValue) => {
     setRating(starValue);
@@ -31,11 +32,12 @@ const Rating = () => {
       const { data } = await axios.post(`/rating/rateUser`, {
         rating: rating,
         description: review,
-        username: user.username,
+        username: username, // ← use URL param, not logged-in user
       });
       toast.success(data.message);
       setRating(0);
       setReview("");
+      navigate(`/profile/${username}`); // ← redirect back to their profile
     } catch (error) {
       console.error(error);
       if (error?.response?.data?.message) {
@@ -51,6 +53,7 @@ const Rating = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
