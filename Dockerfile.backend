@@ -28,10 +28,14 @@ ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
 ARG GOOGLE_CALLBACK_URL
 ARG JWT_SECRET
+ARG CLIENT_URL
+ARG NODE_ENV
 
 
 #write the environment variables to a .env file
 RUN echo "PORT=${PORT}" > .env \
+    && echo "CLIENT_URL=${CLIENT_URL}" >> .env \
+    && echo "NODE_ENV=${NODE_ENV}" >> .env \
     && echo "CORS_ORIGIN=${CORS_ORIGIN}" >> .env \
     && echo "MONGODB_URI=${MONGODB_URI}" >> .env \
     && echo "CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}" >> .env \
