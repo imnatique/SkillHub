@@ -22,14 +22,6 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-
-app.use(
-  cors({
-    origin: "https://skillhubconnect.vercel.app",
-    credentials: true,
-  })
-);
-
 app.use(passport.initialize());
 
 import userRouter from "./routes/user.routes.js";
