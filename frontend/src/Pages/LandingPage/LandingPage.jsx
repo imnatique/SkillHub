@@ -16,8 +16,9 @@ const LandingPage = () => {
 
   const navigate = useNavigate();
 
+  const isLoggedIn = !!localStorage.getItem("userInfo");
   const handleNavigate = () => {
-    navigate("/login");
+    navigate(isLoggedIn ? "/discover" : "/login");
   };
 
   return (
@@ -37,7 +38,7 @@ const LandingPage = () => {
               onClick={handleNavigate}
               className="bg-rd text-bgl font-medium px-6 py-3 rounded hover:bg-rds transition"
             >
-              Start Skill Swap
+              {isLoggedIn ? "Explore Discover" : "Start Skill Swap"}
             </button>
           </div>
 

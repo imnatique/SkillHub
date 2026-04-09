@@ -165,7 +165,7 @@ export const saveAddUnRegisteredUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Bio should be less than 500 characters");
   }
 
-  if (projects.size > 0) {
+  if (projects.length  > 0) {
     projects.forEach((project) => {
       if (
         !project.title ||
@@ -176,7 +176,7 @@ export const saveAddUnRegisteredUser = asyncHandler(async (req, res) => {
       ) {
         throw new ApiError(400, "Please provide all the details");
       }
-      if (project.projectLink.match(/^(http|https):\/\/[^ "]+$/)) {
+      if (!project.projectLink.match(/^(http|https):\/\/[^ "]+$/)) {
         throw new ApiError(400, "Please provide valid project link");
       }
       if (project.startDate > project.endDate) {
@@ -266,7 +266,7 @@ export const registerUser = async (req, res) => {
   if (bio.length > 500) {
     throw new ApiError(400, "Bio should be less than 500 characters");
   }
-  if (projects.size > 0) {
+  if (projects.length  > 0) {
     projects.forEach((project) => {
       if (
         !project.title ||
@@ -277,7 +277,7 @@ export const registerUser = async (req, res) => {
       ) {
         throw new ApiError(400, "Please provide all the details");
       }
-      if (project.projectLink.match(/^(http|https):\/\/[^ "]+$/)) {
+      if (!project.projectLink.match(/^(http|https):\/\/[^ "]+$/)) {
         throw new ApiError(400, "Please provide valid project link");
       }
       if (project.startDate > project.endDate) {
@@ -444,7 +444,7 @@ export const saveAddRegisteredUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Bio should be less than 500 characters");
   }
 
-  if (projects.size > 0) {
+  if (projects.length  > 0) {
     projects.forEach((project) => {
       if (
         !project.title ||
@@ -455,7 +455,7 @@ export const saveAddRegisteredUser = asyncHandler(async (req, res) => {
       ) {
         throw new ApiError(400, "Please provide all the details");
       }
-      if (project.projectLink.match(/^(http|https):\/\/[^ "]+$/)) {
+      if (!project.projectLink.match(/^(http|https):\/\/[^ "]+$/)) {
         throw new ApiError(400, "Please provide valid project link");
       }
       if (project.startDate > project.endDate) {

@@ -44,7 +44,7 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
     const jwtToken = generateJWTToken_username(existingUser);
     const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
     const isProd = process.env.NODE_ENV === "production";
-    res.cookie("accessToken", jwtToken, {
+    res.cookie("accessTokenRegistration", jwtToken, {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
@@ -66,7 +66,7 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
   const jwtToken = generateJWTToken_email(unregisteredUser);
   const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
     const isProd = process.env.NODE_ENV === "production";
-    res.cookie("accessToken", jwtToken, {
+    res.cookie("accessTokenRegistration", jwtToken, {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
@@ -76,7 +76,7 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
 });
 
 export const handleLogout = (req, res) => {
-  res.clearCookie("accessToken");
+  res.clearCookie("accessTokenRegistration");
   return res
     .status(200)
     .json(new ApiResponse(200, null, "User logged out successfully"));

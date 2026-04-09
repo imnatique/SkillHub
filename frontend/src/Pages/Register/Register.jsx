@@ -109,7 +109,7 @@ const Register = () => {
       setForm((prevState) => ({
         ...prevState,
         skillsProficientAt: prevState.skillsProficientAt.filter(
-          (item) => item !== skill
+          (item) => item !== skill,
         ),
       }));
     } else {
@@ -122,7 +122,7 @@ const Register = () => {
 
   const handleRemoveEducation = (e, tid) => {
     const updatedEducation = form.education.filter(
-      (item, i) => item.id !== tid
+      (item, i) => item.id !== tid,
     );
     setForm((prevState) => ({
       ...prevState,
@@ -135,7 +135,7 @@ const Register = () => {
     setForm((prevState) => ({
       ...prevState,
       education: prevState.education.map((item, i) =>
-        i === index ? { ...item, [name]: value } : item
+        i === index ? { ...item, [name]: value } : item,
       ),
     }));
   };
@@ -145,7 +145,7 @@ const Register = () => {
     setForm((prevState) => ({
       ...prevState,
       projects: prevState.projects.map((item, i) =>
-        i === index ? { ...item, [name]: value } : item
+        i === index ? { ...item, [name]: value } : item,
       ),
     }));
   };
@@ -173,7 +173,7 @@ const Register = () => {
     }
     if (!form.portfolioLink && !form.githubLink && !form.linkedinLink) {
       toast.error(
-        "Enter atleast one link among portfolio, github and linkedin"
+        "Enter atleast one link among portfolio, github and linkedin",
       );
       return false;
     }
@@ -197,31 +197,32 @@ const Register = () => {
   };
 
   const validateEduForm = () => {
+    let valid = true;
     form.education.forEach((edu, index) => {
       if (!edu.institution) {
         toast.error(
-          `Institution name is empty in education field ${index + 1}`
+          `Institution name is empty in education field ${index + 1}`,
         );
-        return false;
+        valid = false;
       }
       if (!edu.degree) {
         toast.error("Degree is empty");
-        return false;
+        valid = false;
       }
       if (!edu.startDate) {
         toast.error("Start date is empty");
-        return false;
+        valid = false;
       }
       if (!edu.endDate) {
         toast.error("End date is empty");
-        return false;
+        valid = false;
       }
       if (!edu.score) {
         toast.error("Score is empty");
-        return false;
+        valid = false;
       }
     });
-    return true;
+    return valid;
   };
 
   const validateAddForm = () => {
@@ -261,13 +262,13 @@ const Register = () => {
       }
       if (project.startDate > project.endDate) {
         toast.error(
-          `Start Date should be less than End Date in project ${index + 1}`
+          `Start Date should be less than End Date in project ${index + 1}`,
         );
         flag = false;
       }
       if (!project.projectLink.match(/^(http|https):\/\/[^ "]+$/)) {
         toast.error(
-          `Please provide valid project link in project ${index + 1}`
+          `Please provide valid project link in project ${index + 1}`,
         );
         flag = false;
       }
@@ -282,7 +283,7 @@ const Register = () => {
       try {
         const { data } = await api.post(
           "/user/unregistered/saveRegDetails",
-          form
+          form,
         );
         toast.success("Details saved successfully");
       } catch (error) {
@@ -306,7 +307,7 @@ const Register = () => {
       try {
         const { data } = await api.post(
           "/user/unregistered/saveEduDetail",
-          form
+          form,
         );
         toast.success("Details saved successfully");
       } catch (error) {
@@ -331,7 +332,7 @@ const Register = () => {
       try {
         const { data } = await api.post(
           "/user/unregistered/saveAddDetail",
-          form
+          form,
         );
         toast.success("Details saved successfully");
       } catch (error) {
@@ -355,6 +356,7 @@ const Register = () => {
       setSaveLoading(true);
       try {
         const { data } = await api.post("/user/registerUser", form);
+        localStorage.setItem("userInfo", JSON.stringify(data.data));
         toast.success("Registration Successful");
         navigate("/discover");
       } catch (error) {
@@ -404,10 +406,10 @@ const Register = () => {
           });
         }
         const proj = data?.data?.projects;
-        proj.forEach((ele) => {
-          ele.id = uuidv4();
-        });
         if (proj) {
+          proj.forEach((ele) => {
+            ele.id = uuidv4();
+          });
           setTechStack(proj.map((item) => "Select some Tech Stack"));
         }
         setForm((prevState) => ({
@@ -464,7 +466,7 @@ const Register = () => {
                 <label className="block text-tl mb-1">Name</label>
                 <input
                   type="text"
-                  name="username"
+                  name="name"
                   onChange={handleInputChange}
                   className="w-full p-2  rounded bg-hvr border border-bgd text-txt focus:outline-none"
                   value={form.name}
@@ -476,7 +478,7 @@ const Register = () => {
                 <label className="block text-tl mb-1">Email</label>
                 <input
                   type="text"
-                  name="username"
+                  name="email"
                   onChange={handleInputChange}
                   className="w-full p-2  rounded bg-hvr border border-bgd text-txt focus:outline-none"
                   value={form.email}
@@ -868,7 +870,7 @@ const Register = () => {
                           setForm((prevState) => ({
                             ...prevState,
                             projects: prevState.projects.filter(
-                              (item) => item.id !== project.id
+                              (item) => item.id !== project.id,
                             ),
                           }));
                         }}
@@ -908,8 +910,8 @@ const Register = () => {
                         onChange={(e) => {
                           setTechStack((prevState) =>
                             prevState.map((item, i) =>
-                              i === index ? e.target.value : item
-                            )
+                              i === index ? e.target.value : item,
+                            ),
                           );
                         }}
                       >
@@ -934,10 +936,10 @@ const Register = () => {
                                       ? {
                                           ...item,
                                           techStack: item.techStack.filter(
-                                            (item) => item !== skill
+                                            (item) => item !== skill,
                                           ),
                                         }
-                                      : item
+                                      : item,
                                   ),
                                 }));
                               }}
@@ -958,7 +960,7 @@ const Register = () => {
                           }
                           if (
                             form.projects[index].techStack.includes(
-                              techStack[index]
+                              techStack[index],
                             )
                           ) {
                             toast.error("Tech Stack already added");
@@ -975,7 +977,7 @@ const Register = () => {
                                       techStack[index],
                                     ],
                                   }
-                                : item
+                                : item,
                             ),
                           }));
                         }}
