@@ -36,7 +36,7 @@ const verifyJWT_email = asyncHandler(async (req, res, next) => {
 const verifyJWT_username = asyncHandler(async (req, res, next) => {
   try {
     const token =
-      req.cookies?.accessToken ||
+      req.cookies?.accessTokenRegistration ||
       req.header("Authorization")?.replace("Bearer ", "");
     if (!token) {
       throw new ApiError(401, "Please Login");
