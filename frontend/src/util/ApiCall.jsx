@@ -1,10 +1,10 @@
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "./api.js";
 
 const ApiCall = async (url, method, navigate, setUser, data) => {
   if (method === "GET") {
     try {
-      const response = await axios.get(url);
+      const response = await api.get(url);
       return response.data;
     } catch (error) {
       console.error("Error in API call:", error);
@@ -27,7 +27,7 @@ const ApiCall = async (url, method, navigate, setUser, data) => {
     }
   } else if (method === "POST") {
     try {
-      const response = await axios.post(url, data);
+      const response = await api.post(url, data);
       return response.data;
     } catch (error) {
       console.error("Error in API call:", error);

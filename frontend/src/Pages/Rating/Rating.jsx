@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"; // ← add useParams
-import axios from "axios";
+import api from "../../util/api.js";
 import { toast } from "react-toastify";
 import { useUser } from "../../util/UserContext";
 import { FaStar } from "react-icons/fa";
@@ -29,7 +29,7 @@ const Rating = () => {
     }
     try {
       setLoading(true);
-      const { data } = await axios.post(`/rating/rateUser`, {
+      const { data } = await api.post(`/rating/rateUser`, {
         rating: rating,
         description: review,
         username: username, // ← use URL param, not logged-in user
@@ -45,7 +45,7 @@ const Rating = () => {
         if (error.response.data.message === "Please Login") {
           localStorage.removeItem("userInfo");
           setUser(null);
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           navigate("/login");
         }
       }

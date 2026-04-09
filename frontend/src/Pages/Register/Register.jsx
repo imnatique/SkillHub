@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../util/api.js";
 import { skills } from "./Skills";
 import { v4 as uuidv4 } from "uuid";
 
@@ -280,7 +280,7 @@ const Register = () => {
     if (check) {
       setSaveLoading(true);
       try {
-        const { data } = await axios.post(
+        const { data } = await api.post(
           "/user/unregistered/saveRegDetails",
           form
         );
@@ -304,7 +304,7 @@ const Register = () => {
     if (check1 && check2) {
       setSaveLoading(true);
       try {
-        const { data } = await axios.post(
+        const { data } = await api.post(
           "/user/unregistered/saveEduDetail",
           form
         );
@@ -329,7 +329,7 @@ const Register = () => {
     if (check1 && check2 && check3) {
       setSaveLoading(true);
       try {
-        const { data } = await axios.post(
+        const { data } = await api.post(
           "/user/unregistered/saveAddDetail",
           form
         );
@@ -354,7 +354,7 @@ const Register = () => {
     if (check1 && check2 && check3) {
       setSaveLoading(true);
       try {
-        const { data } = await axios.post("/user/registerUser", form);
+        const { data } = await api.post("/user/registerUser", form);
         toast.success("Registration Successful");
         navigate("/discover");
       } catch (error) {
@@ -387,7 +387,7 @@ const Register = () => {
     setLoading(true);
     const getUser = async () => {
       try {
-        const { data } = await axios.get("/user/unregistered/getDetails");
+        const { data } = await api.get("/user/unregistered/getDetails");
         const edu = data?.data?.education;
         edu.forEach((ele) => {
           ele.id = uuidv4();

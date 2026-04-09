@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useUser } from "../../util/UserContext";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../util/api.js";
 import { Link } from "react-router-dom";
 import { FaUserEdit, FaGithub, FaLinkedin, FaGlobe } from "react-icons/fa";
 
@@ -19,7 +19,7 @@ const Profile = () => {
     const getUser = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(
+        const { data } = await api.get(
           `/user/registered/getDetails/${username}`
         );
         setProfileUser(data.data);
@@ -30,7 +30,7 @@ const Profile = () => {
           if (error.response.data.message === "Please Login") {
             localStorage.removeItem("userInfo");
             setUser(null);
-            await axios.get("/auth/logout");
+            await api.get("/auth/logout");
             navigate("/login");
           }
         }
@@ -52,7 +52,7 @@ const Profile = () => {
   const connectHandler = async () => {
     try {
       setConnectLoading(true);
-      const { data } = await axios.post(`/request/create`, {
+      const { data } = await api.post(`/request/create`, {
         receiverID: profileUser._id,
       });
 
@@ -65,7 +65,7 @@ const Profile = () => {
         if (error.response.data.message === "Please Login") {
           localStorage.removeItem("userInfo");
           setUser(null);
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           navigate("/login");
         }
       }

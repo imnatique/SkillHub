@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import api from "../../util/api.js";
 import { toast } from "react-toastify";
 import { useUser } from "../../util/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -45,7 +45,7 @@ const Chats = () => {
   }, []);
 
   useEffect(() => {
-    socket = io(axios.defaults.baseURL);
+    socket = io(api.defaults.baseURL);
     if (user) {
       socket.emit("setup", user);
     }
@@ -63,7 +63,7 @@ const Chats = () => {
     try {
       setChatLoading(true);
       const tempUser = JSON.parse(localStorage.getItem("userInfo"));
-      const { data } = await axios.get("https://skillhub-ejpm.onrender.com/chat");
+      const { data } = await api.get("/chat");
       toast.success(data.message);
       if (tempUser?._id) {
         const temp = data.data.map((chat) => {
@@ -84,7 +84,7 @@ const Chats = () => {
         if (err.response.data.message === "Please Login") {
           localStorage.removeItem("userInfo");
           setUser(null);
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           navigate("/login");
         }
       } else {
@@ -98,8 +98,8 @@ const Chats = () => {
   const handleChatClick = async (chatId) => {
     try {
       setChatMessageLoading(true);
-      const { data } = await axios.get(
-        `https://skillhub-ejpm.onrender.com/message/getMessages/${chatId}`
+      const { data } = await api.get(
+        `/message/getMessages/${chatId}`
       );
       setChatMessages(data.data);
       setMessage("");
@@ -114,7 +114,7 @@ const Chats = () => {
         if (err.response.data.message === "Please Login") {
           localStorage.removeItem("userInfo");
           setUser(null);
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           navigate("/login");
         }
       } else {
@@ -132,7 +132,7 @@ const Chats = () => {
         toast.error("Message is empty");
         return;
       }
-      const { data } = await axios.post("/message/sendMessage", {
+      const { data } = await api.post("/message/sendMessage", {
         chatId: selectedChat.id,
         content: message,
       });
@@ -145,7 +145,7 @@ const Chats = () => {
       if (err?.response?.data?.message) {
         toast.error(err.response.data.message);
         if (err.response.data.message === "Please Login") {
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           setUser(null);
           localStorage.removeItem("userInfo");
           navigate("/login");
@@ -159,7 +159,7 @@ const Chats = () => {
   const getRequests = async () => {
     try {
       setRequestLoading(true);
-      const { data } = await axios.get("/request/getRequests");
+      const { data } = await api.get("/request/getRequests");
       setRequests(data.data);
       toast.success(data.message);
     } catch (err) {
@@ -167,7 +167,7 @@ const Chats = () => {
       if (err?.response?.data?.message) {
         toast.error(err.response.data.message);
         if (err.response.data.message === "Please Login") {
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           setUser(null);
           localStorage.removeItem("userInfo");
           navigate("/login");
@@ -200,7 +200,7 @@ const Chats = () => {
   const handleRequestAccept = async (e) => {
     try {
       setAcceptRequestLoading(true);
-      const { data } = await axios.post("/request/acceptRequest", {
+      const { data } = await api.post("/request/acceptRequest", {
         requestId: selectedRequest._id,
       });
       toast.success(data.message);
@@ -212,7 +212,7 @@ const Chats = () => {
       if (err?.response?.data?.message) {
         toast.error(err.response.data.message);
         if (err.response.data.message === "Please Login") {
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           setUser(null);
           localStorage.removeItem("userInfo");
           navigate("/login");
@@ -229,7 +229,7 @@ const Chats = () => {
   const handleRequestReject = async () => {
     try {
       setAcceptRequestLoading(true);
-      const { data } = axios.post("/request/rejectRequest", {
+      const { data } = api.post("/request/rejectRequest", {
         requestId: selectedRequest._id,
       });
       toast.success(data.message);
@@ -240,7 +240,7 @@ const Chats = () => {
       if (err?.response?.data?.message) {
         toast.error(err.response.data.message);
         if (err.response.data.message === "Please Login") {
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           setUser(null);
           localStorage.removeItem("userInfo");
           navigate("/login");
@@ -256,7 +256,7 @@ const Chats = () => {
 
   const deleteMessage = async (messageId) => {
     try {
-      const { data } = await axios.delete(
+      const { data } = await api.delete(
         `/message/deleteMessage/${messageId}`
       );
       toast.success(data.message);
@@ -267,7 +267,7 @@ const Chats = () => {
       if (err?.response?.data?.message) {
         toast.error(err.response.data.message);
         if (err.response.data.message === "Please Login") {
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           setUser(null);
           localStorage.removeItem("userInfo");
           navigate("/login");

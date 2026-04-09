@@ -16,7 +16,7 @@ connectDB()
     const io = new Server(server, {
       pingTimeout: 60000,
       cors: {
-        origin: "https://skillhubconnect.vercel.app",
+        origin: process.env.CORS_ORIGIN,
         credentials: true,
       },
     });

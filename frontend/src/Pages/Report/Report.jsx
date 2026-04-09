@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useUser } from "../../util/UserContext";
-import axios from "axios";
+import api from "../../util/api.js";
 import { toast } from "react-toastify";
 
 const ReportForm = () => {
@@ -31,7 +31,7 @@ const ReportForm = () => {
 
     try {
       setLoading(true);
-      const { data } = await axios.post(`/report/create`, formData);
+      const { data } = await api.post(`/report/create`, formData);
       toast.success(data.message);
       setFormData((prevState) => ({
         ...prevState,
@@ -45,7 +45,7 @@ const ReportForm = () => {
         if (error.response.data.message === "Please Login") {
           localStorage.removeItem("userInfo");
           setUser(null);
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           navigate("/login");
         }
       }

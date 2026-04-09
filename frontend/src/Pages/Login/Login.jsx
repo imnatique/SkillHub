@@ -5,7 +5,7 @@ const Login = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleGoogleLogin = () => {
-    window.location.href = "https://skillhub-ejpm.onrender.com/auth/google";
+    window.location.href = `${import.meta.env.VITE_SERVER_URL}/auth/google`;
   };
 
   return (

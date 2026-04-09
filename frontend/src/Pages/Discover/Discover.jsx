@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../util/api.js";
 import { toast } from "react-toastify";
 import { useUser } from "../../util/UserContext";
 import ProfileCard from "./ProfileCard";
@@ -18,7 +18,7 @@ const Discover = () => {
     const getUser = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`/user/registered/getDetails`);
+        const { data } = await api.get(`/user/registered/getDetails`);
         setUser(data.data);
         localStorage.setItem("userInfo", JSON.stringify(data.data));
       } catch (error) {
@@ -27,14 +27,14 @@ const Discover = () => {
         }
         localStorage.removeItem("userInfo");
         setUser(null);
-        await axios.get("/auth/logout");
+        await api.get("/auth/logout");
         navigate("/login");
       }
     };
 
     const getDiscoverUsers = async () => {
       try {
-        const { data } = await axios.get("/user/discover");
+        const { data } = await api.get("/user/discover");
         setDiscoverUsers(data.data.forYou);
         setWebDevUsers(data.data.webDev);
         setMlUsers(data.data.ml);
@@ -45,7 +45,7 @@ const Discover = () => {
         }
         localStorage.removeItem("userInfo");
         setUser(null);
-        await axios.get("/auth/logout");
+        await api.get("/auth/logout");
         navigate("/login");
       } finally {
         setLoading(false);

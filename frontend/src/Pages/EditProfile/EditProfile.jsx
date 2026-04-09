@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { skills } from "./Skills";
-import axios from "axios";
+import api from "../../util/api.js";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "../../util/UserContext";
 
@@ -75,7 +75,7 @@ const EditProfile = () => {
     data.append("picture", e.target.files[0]);
     try {
       toast.info("Uploading your pic please wait upload confirmation..");
-      const response = await axios.post("/user/uploadPicture", data);
+      const response = await api.post("/user/uploadPicture", data);
       toast.success("Pic uploaded successfully");
       setForm(() => {
         return {
@@ -90,7 +90,7 @@ const EditProfile = () => {
         if (error.response.data.message === "Please Login") {
           localStorage.removeItem("userInfo");
           setUser(null);
-          await axios.get("/auth/logout");
+          await api.get("/auth/logout");
           navigate("/login");
         }
       }
@@ -330,7 +330,7 @@ const EditProfile = () => {
     if (check) {
       setSaveLoading(true);
       try {
-        const { data } = await axios.post(
+        const { data } = await api.post(
           "/user/registered/saveRegDetails",
           form
         );
@@ -354,7 +354,7 @@ const EditProfile = () => {
     if (check1 && check2) {
       setSaveLoading(true);
       try {
-        const { data } = await axios.post(
+        const { data } = await api.post(
           "/user/registered/saveEduDetail",
           form
         );
@@ -379,7 +379,7 @@ const EditProfile = () => {
     if (check1 && check2 && check3) {
       setSaveLoading(true);
       try {
-        const { data } = await axios.post(
+        const { data } = await api.post(
           "/user/registered/saveAddDetail",
           form
         );

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../util/UserContext";
 import { FaChevronDown } from "react-icons/fa";
-import axios from "axios";
+import api from "../../util/api.js";
 
 const UserProfileDropdown = () => {
   const { user, setUser } = useUser();
@@ -13,8 +13,8 @@ const UserProfileDropdown = () => {
     localStorage.removeItem("userInfo");
     setUser(null);
     try {
-      await axios.get("/auth/logout");
-      window.location.href = "https://skillhub-ejpm.onrender.com/login";
+      await api.get("/auth/logout");
+      window.location.href = "/login";
     } catch (error) {
       console.error(error.response?.data?.message || error);
     }

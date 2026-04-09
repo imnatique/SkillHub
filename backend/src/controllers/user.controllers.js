@@ -320,12 +320,13 @@ export const registerUser = async (req, res) => {
 
   const jwtToken = generateJWTToken_username(newUser);
   const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-  res.cookie("accessToken", jwtToken, {
-    httpOnly: true,
-    expires: expiryDate,
-    secure: true,
-    sameSite: "None",
-  });
+    const isProd = process.env.NODE_ENV === "production";
+    res.cookie("accessToken", jwtToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      expires: expiryDate,
+    });
   res.clearCookie("accessTokenRegistration");
   return res
     .status(200)

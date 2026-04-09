@@ -43,11 +43,12 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
   if (existingUser) {
     const jwtToken = generateJWTToken_username(existingUser);
     const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
+    const isProd = process.env.NODE_ENV === "production";
     res.cookie("accessToken", jwtToken, {
       httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       expires: expiryDate,
-      sameSite: "Lax",
-      secure: process.env.NODE_ENV === "production",
     });
     return res.redirect(`${CLIENT_URL}/discover`);
   }
@@ -63,13 +64,14 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
     });
   }
   const jwtToken = generateJWTToken_email(unregisteredUser);
-  const expiryDate = new Date(Date.now() + 0.5 * 60 * 60 * 1000);
-  res.cookie("accessTokenRegistration", jwtToken, {
-    httpOnly: true,
-    expires: expiryDate,
-    sameSite: "Lax",
-    secure: process.env.NODE_ENV === "production",
-  });
+  const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
+    const isProd = process.env.NODE_ENV === "production";
+    res.cookie("accessToken", jwtToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      expires: expiryDate,
+    });
   return res.redirect(`${CLIENT_URL}/register`);
 });
 
