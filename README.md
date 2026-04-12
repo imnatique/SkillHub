@@ -56,7 +56,7 @@ npm install
 Create .env file in the frontend and write the following:
 
 ```env
-VITE_LOCALHOST = http://localhost:8000
+VITE_SERVER_URL = http://localhost:8000
 VITE_SERVER_URL = <your deployment link>
 ```
 
@@ -79,7 +79,9 @@ Create .env file in the backend and write the following:
 
 ```env
 PORT = 8000
-CORS_ORIGIN = *
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+CORS_ORIGIN=http://localhost:5173
 MONGODB_URI = mongodb+srv://<your-username>:<your-password>@cluster0.<your-project>.mongodb.net
 
 CLOUDINARY_CLOUD_NAME = <your-cloudinary-cloud-name>
@@ -102,47 +104,43 @@ Run backend
 npm run dev
 ```
 
-The frontend will be running on `http://localhost:8000`
+The backend will be running on `http://localhost:8000`
 
 ## Install and Setup through Docker
 
 Create a docker-compose.yml file in SkillHub folder. Write the following in it.
 
 ```yml
+version: "3.9"
+
 services:
   backend:
     build:
       context: .
       dockerfile: Dockerfile.backend
-      args:
-        PORT: 8000
-        CORS_ORIGIN: "*"
-        MONGODB_URI: "mongodb+srv://<your-username>:<your-password>@cluster0.<your-project>.mongodb.net"
-        CLOUDINARY_CLOUD_NAME: "<your-cloudinary-cloud-name>"
-        CLOUDINARY_API_KEY: "<your-cloudinary-api-key>"
-        CLOUDINARY_API_SECRET: "<your-cloudinary-api-key>"
-        GOOGLE_CLIENT_ID: "<your-google-client-id>"
-        GOOGLE_CLIENT_SECRET: "<your-google-client-secret>"
-        GOOGLE_CALLBACK_URL: "http://localhost:8000/auth/google/callback"
-        JWT_SECRET: "<your-jwt-secret>"
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/.env
+    restart: always
 
   frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-      args:
-        VITE_LOCALHOST: "http://localhost:8000"
-        VITE_SERVER_URL = "<your-deployment-link>"
     ports:
       - "5173:5173"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    restart: always
 ```
 
 Run the docker compose file by using the following command which will run both frontend and backend.
 
 ```bash
-sudo docker-compose up
+sudo docker-compose up --build
 ```
 
 To remove the docker images use the following command
