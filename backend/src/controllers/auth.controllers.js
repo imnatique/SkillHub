@@ -1,15 +1,12 @@
-import {
-  generateJWTToken_email,
-  generateJWTToken_username,
-} from "../utils/generateJWTToken.js";
+import { generateJWTToken_email, generateJWTToken_username } from "../utils/generateJWTToken.js";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { User } from "../models/user.model.js";
 import { UnRegisteredUser } from "../models/unRegisteredUser.model.js";
 import dotenv from "dotenv";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { setAuthCookie } from "../utils/cookieOptions.js";
 
 dotenv.config();
 
@@ -22,9 +19,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
-    async (accessToken, refreshToken, profile, done) => {
-      done(null, profile);
-    }
+    (accessToken, refreshToken, profile, done) => done(null, profile)
   )
 );
 
@@ -38,46 +33,24 @@ export const googleAuthCallback = passport.authenticate("google", {
 });
 
 export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
-  const existingUser = await User.findOne({ email: req.user._json.email });
+  const { email, name, picture } = req.user._json;
 
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
-    const jwtToken = generateJWTToken_username(existingUser);
-    const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-    const isProd = process.env.NODE_ENV === "production";
-    res.cookie("accessTokenRegistration", jwtToken, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "none" : "lax",
-      expires: expiryDate,
-    });
+    setAuthCookie(res, "accessTokenRegistration", generateJWTToken_username(existingUser));
     return res.redirect(`${CLIENT_URL}/discover`);
   }
 
-  let unregisteredUser = await UnRegisteredUser.findOne({
-    email: req.user._json.email,
-  });
+  let unregisteredUser = await UnRegisteredUser.findOne({ email });
   if (!unregisteredUser) {
-    unregisteredUser = await UnRegisteredUser.create({
-      name: req.user._json.name,
-      email: req.user._json.email,
-      picture: req.user._json.picture,
-    });
+    unregisteredUser = await UnRegisteredUser.create({ name, email, picture });
   }
-  const jwtToken = generateJWTToken_email(unregisteredUser);
-  const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-    const isProd = process.env.NODE_ENV === "production";
-    res.cookie("accessTokenRegistration", jwtToken, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "none" : "lax",
-      expires: expiryDate,
-    });
+
+  setAuthCookie(res, "accessTokenRegistration", generateJWTToken_email(unregisteredUser));
   return res.redirect(`${CLIENT_URL}/register`);
 });
 
 export const handleLogout = (req, res) => {
   res.clearCookie("accessTokenRegistration");
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "User logged out successfully"));
+  return res.status(200).json(new ApiResponse(200, null, "User logged out successfully"));
 };
