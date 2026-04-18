@@ -1,12 +1,31 @@
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
+import api from "../../util/api.js"; // your existing axios instance
 
 const Login = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
 
-  const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_SERVER_URL}/auth/google`;
-  };
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await api.post("/auth/google", {
+          access_token: tokenResponse.access_token,
+        });
+
+        if (res.data.data.isNew) {
+          navigate("/register");
+        } else {
+          navigate("/discover");
+        }
+      } catch (error) {
+        console.error("Login failed", error);
+      }
+    },
+    onError: () => console.error("Google Login Failed"),
+  });
 
   return (
     <div className="relative min-h-[92vh] flex flex-col justify-center items-center">
@@ -14,7 +33,6 @@ const Login = () => {
         <h1 className="text-[50px] text-txt font-oswald font-bold text-center">
           LOGIN
         </h1>
-
         <div className="flex justify-center">
           <button
             onClick={handleGoogleLogin}

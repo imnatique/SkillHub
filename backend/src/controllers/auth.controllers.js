@@ -2,82 +2,44 @@ import {
   generateJWTToken_email,
   generateJWTToken_username,
 } from "../utils/generateJWTToken.js";
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { User } from "../models/user.model.js";
 import { UnRegisteredUser } from "../models/unRegisteredUser.model.js";
 import dotenv from "dotenv";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { setAuthCookie } from "../utils/cookieOptions.js";
 
 dotenv.config();
 
-const CLIENT_URL = process.env.CLIENT_URL;
+export const googleLogin = asyncHandler(async (req, res) => {
+  const { access_token } = req.body;
+  if (!access_token) throw new ApiError(400, "Google token missing");
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      done(null, profile);
-    }
-  )
-);
-
-export const googleAuthHandler = passport.authenticate("google", {
-  scope: ["profile", "email"],
-});
-
-export const googleAuthCallback = passport.authenticate("google", {
-  failureRedirect: `${CLIENT_URL}/login`,
-  session: false,
-});
-
-export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
-  const existingUser = await User.findOne({ email: req.user._json.email });
-
-  if (existingUser) {
-    const jwtToken = generateJWTToken_username(existingUser);
-    const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-    const isProd = process.env.NODE_ENV === "production";
-    res.cookie("accessTokenRegistration", jwtToken, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "none" : "lax",
-      expires: expiryDate,
-    });
-    return res.redirect(`${CLIENT_URL}/discover`);
-  }
-
-  let unregisteredUser = await UnRegisteredUser.findOne({
-    email: req.user._json.email,
+  const response = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: { Authorization: `Bearer ${access_token}` },
   });
-  if (!unregisteredUser) {
-    unregisteredUser = await UnRegisteredUser.create({
-      name: req.user._json.name,
-      email: req.user._json.email,
-      picture: req.user._json.picture,
-    });
+
+  if (!response.ok) throw new ApiError(401, "Invalid Google token");
+
+  const { email, name, picture } = await response.json();
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    setAuthCookie(res, "accessTokenRegistration", generateJWTToken_username(existingUser));
+    return res.status(200).json(new ApiResponse(200, existingUser, "Login successful"));
   }
-  const jwtToken = generateJWTToken_email(unregisteredUser);
-  const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-    const isProd = process.env.NODE_ENV === "production";
-    res.cookie("accessTokenRegistration", jwtToken, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "none" : "lax",
-      expires: expiryDate,
-    });
-  return res.redirect(`${CLIENT_URL}/register`);
+
+  let unregisteredUser = await UnRegisteredUser.findOne({ email });
+  if (!unregisteredUser) {
+    unregisteredUser = await UnRegisteredUser.create({ name, email, picture });
+  }
+
+  setAuthCookie(res, "accessTokenRegistration", generateJWTToken_email(unregisteredUser));
+  return res.status(200).json(new ApiResponse(200, { isNew: true }, "Registration required"));
 });
 
 export const handleLogout = (req, res) => {
   res.clearCookie("accessTokenRegistration");
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "User logged out successfully"));
+  return res.status(200).json(new ApiResponse(200, null, "User logged out successfully"));
 };
