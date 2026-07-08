@@ -1,4 +1,4 @@
-# 🌟 SkillHub – The Online Skill Barter Platform
+# SkillHub – The Online Skill Barter Platform
 
 SkillHub is a full-stack web application that allows users to exchange skills directly with others through a collaborative and secure online platform. Users can sign up, list the skills they offer and want to learn, discover matching partners, and chat in real-time.
 
@@ -6,20 +6,20 @@ This project is built to demonstrate real-world software development using the M
 
 ---
 
-## 🚀 Features
+## Features
 
-- 👤 User Authentication (including Google Sign-In)
-- 🛠️ List Offered and Required Skills
-- 🔍 Discover Matching Users
-- 💬 Real-Time Chat
-- 📝 User Reviews & Ratings
-- 🌐 Responsive Design using Tailwind CSS
-- 🐳 Dockerized Fullstack Setup (Backend + Frontend)
-- 🔐 JWT Authentication
+-  User Authentication (including Google Sign-In)
+-  List Offered and Required Skills
+-  Discover Matching Users
+-  Real-Time Chat
+-  User Reviews & Ratings
+-  Responsive Design using Tailwind CSS
+-  Dockerized Fullstack Setup (Backend + Frontend)
+-  JWT Authentication
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 | Layer         | Technology                         |
 |-------------- |------------------------------------|
@@ -152,3 +152,13 @@ sudo docker-compose down --rmi all
 Now you can run the website on `http://localhost:5173`
 ========
 
+## Live Demo
+
+
+[Token Bucket Rate Limiter](https://token-bucket-rate-limiter.vercel.app/)
+
+---
+
+## License
+
+This project is available for educational and portfolio purposes.
