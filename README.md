@@ -155,7 +155,7 @@ Now you can run the website on `http://localhost:5173`
 ## Live Demo
 
 
-[Token Bucket Rate Limiter](https://skillhubconnect.vercel.app)
+[Skill Hub](https://skillhubconnect.vercel.app)
 
 ---
 
